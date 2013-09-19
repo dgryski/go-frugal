@@ -47,7 +47,10 @@ func main() {
 
 	go sendInts(r, ch)
 
+	var stream []int
+
 	for v := range ch {
+		stream = append(stream, v)
 		for i := 0; i < *n; i++ {
 			fs[i].Insert(int(v))
 		}
@@ -61,14 +64,10 @@ func main() {
 	}
 
 	sort.Ints(ints)
+	sort.Ints(stream)
 
-	for i := 0; i < *n; i++ {
-		var s string
-		if i == *n/2 {
-			s = " <-- "
-		}
-		log.Println(ints[i], s)
-	}
+	log.Println("estimate:", ints[*n/2])
+	log.Println("exact:", stream[int(float64(len(stream))**q)])
 
 }
 
