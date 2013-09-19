@@ -19,6 +19,7 @@ func main() {
 	n := flag.Int("n", 5, "number of concurrent estimators")
 	m := flag.Int("m", 0, "initial estimate")
 	f := flag.String("f", "", "file to read")
+	exact := flag.Bool("x", false, "compute exact quantile")
 
 	rand.Seed(time.Now().UnixNano())
 
@@ -50,7 +51,9 @@ func main() {
 	var stream []int
 
 	for v := range ch {
-		stream = append(stream, v)
+		if *exact {
+			stream = append(stream, v)
+		}
 		for i := 0; i < *n; i++ {
 			fs[i].Insert(int(v))
 		}
@@ -64,10 +67,12 @@ func main() {
 	}
 
 	sort.Ints(ints)
-	sort.Ints(stream)
 
 	log.Println("estimate:", ints[*n/2])
-	log.Println("exact:", stream[int(float64(len(stream))**q)])
+	if *exact {
+		sort.Ints(stream)
+		log.Println("exact:", stream[int(float64(len(stream))**q)])
+	}
 
 }
 
