@@ -30,7 +30,7 @@ func main() {
 		fs = append(fs, frugal.New(*m, float32(*q)))
 	}
 
-	ch := make(chan int64)
+	ch := make(chan int)
 
 	var r io.Reader
 
@@ -45,7 +45,7 @@ func main() {
 
 	}
 
-	go sendFloats(r, ch)
+	go sendInts(r, ch)
 
 	for v := range ch {
 		for i := 0; i < *n; i++ {
@@ -72,7 +72,7 @@ func main() {
 
 }
 
-func sendFloats(r io.Reader, ch chan<- int64) {
+func sendInts(r io.Reader, ch chan<- int) {
 	sc := bufio.NewScanner(r)
 	for sc.Scan() {
 		b := sc.Bytes()
@@ -80,7 +80,7 @@ func sendFloats(r io.Reader, ch chan<- int64) {
 		if err != nil {
 			log.Fatal(err)
 		}
-		ch <- v
+		ch <- int(v)
 	}
 	if sc.Err() != nil {
 		log.Fatal(sc.Err())
