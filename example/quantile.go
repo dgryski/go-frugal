@@ -6,9 +6,11 @@ import (
 	"github.com/dgryski/go-frugal"
 	"io"
 	"log"
+	"math/rand"
 	"os"
 	"sort"
 	"strconv"
+	"time"
 )
 
 func main() {
@@ -17,6 +19,8 @@ func main() {
 	n := flag.Int("n", 5, "number of concurrent estimators")
 	m := flag.Int("m", 0, "initial estimate")
 	f := flag.String("f", "", "file to read")
+
+	rand.Seed(time.Now().UnixNano())
 
 	flag.Parse()
 
