@@ -51,12 +51,17 @@ func (f2 *Frugal2U) Insert(s int) {
 			f2.m += 1
 		}
 
-		f2.sign = 1
-
 		if f2.m > s {
 			f2.step += (s - f2.m)
 			f2.m = s
 		}
+
+		if f2.sign < 0 {
+			f2.step = 1
+		}
+
+		f2.sign = 1
+
 	} else if s < f2.m && f2.r.Float32() > f2.q {
 		f2.step += -f2.sign * f2.f(f2.step)
 		if f2.step > 0 {
@@ -65,16 +70,16 @@ func (f2 *Frugal2U) Insert(s int) {
 			f2.m--
 		}
 
-		f2.sign = -1
-
 		if f2.m < s {
 			f2.step += (f2.m - s)
 			f2.m = s
 		}
 
-	}
+		if f2.sign > 0 {
+			f2.step = 1
+		}
 
-	if (f2.m-s)*f2.sign < 0 && f2.step > 1 {
-		f2.step = 1
+		f2.sign = -1
+
 	}
 }
