@@ -29,7 +29,7 @@ func New(estimate int, quantile float32) *Frugal2U {
 		m:    estimate,
 		q:    quantile,
 		step: 1,
-		sign: 1,
+		sign: 0,
 		r:    rand.New(rand.NewSource(rand.Int63())),
 		f:    func(int) int { return 1 },
 	}
@@ -42,6 +42,13 @@ func (f2 *Frugal2U) Estimate() int {
 
 // Insert inserts a value into the quantile stream.
 func (f2 *Frugal2U) Insert(s int) {
+
+	if f2.sign == 0 {
+		// first item is our estimate if we have nothing else
+		f2.m = s
+		f2.sign = 1
+		return
+	}
 
 	if s > f2.m && f2.r.Float32() > 1-f2.q {
 		f2.step += f2.sign * f2.f(f2.step)
