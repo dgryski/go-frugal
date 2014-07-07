@@ -3,6 +3,7 @@
 
 This implements Algorithm 3 from
 "Frugal Streaming for Estimating Quantiles" (Qiang Ma, S. Muthukrishnan, and Mark Sandler 2013)
+( http://arxiv.org/abs/1407.1121 )
 
 For more information, please see http://blog.aggregateknowledge.com/2013/09/16/sketch-of-the-day-frugal-streaming/
 
@@ -50,7 +51,9 @@ func (f2 *Frugal2U) Insert(s int) {
 		return
 	}
 
-	if s > f2.m && f2.r.Float32() > 1-f2.q {
+	rnd := f2.r.Float32()
+
+	if s > f2.m && rnd > 1-f2.q {
 		f2.step += f2.sign * f2.f(f2.step)
 		if f2.step > 0 {
 			f2.m += f2.step
@@ -63,13 +66,13 @@ func (f2 *Frugal2U) Insert(s int) {
 			f2.m = s
 		}
 
-		if f2.sign < 0 {
+		if f2.sign < 0 && f2.step > 1 {
 			f2.step = 1
 		}
 
 		f2.sign = 1
 
-	} else if s < f2.m && f2.r.Float32() > f2.q {
+	} else if s < f2.m && rnd > f2.q {
 		f2.step += -f2.sign * f2.f(f2.step)
 		if f2.step > 0 {
 			f2.m -= f2.step
@@ -82,11 +85,10 @@ func (f2 *Frugal2U) Insert(s int) {
 			f2.m = s
 		}
 
-		if f2.sign > 0 {
+		if f2.sign > 0 && f2.step > 1 {
 			f2.step = 1
 		}
 
 		f2.sign = -1
-
 	}
 }
